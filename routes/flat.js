@@ -27,7 +27,7 @@ router.post('/myListings/edit/:id', (req, res, next)=>{
     Flat.create({
       title: req.body.title,
       description: req.body.description,
-      images: req.body.images,
+      images: req.body.images, 
       price: req.body.price,
       contact: req.body.contact,
       rooms: req.body.rooms,
