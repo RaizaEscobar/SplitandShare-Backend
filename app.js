@@ -65,7 +65,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // ROUTER MIDDLEWARE
 
-app.use('/', require('./routes/favorite'));
+
 app.use("/auth", auth);
 app.use('/', require('./routes/flat'));
 app.use('/', require('./routes/users'));
