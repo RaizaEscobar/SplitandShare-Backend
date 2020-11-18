@@ -1,6 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const Flat = require("../models/Flat")
+const User = require('../models/user');
+
+router.post("/flat/:id", async (req, res, next) => {
+ let currentUser = await User.findById(req.session.currentUser);
+ let favorites = currentUser.favoriteFlats
+ let index = favorites.indexOf(req.params.id)
+
+ if (index > -1) {
+   favorites.splice(index, 1)
+ } else {
+   favorites.push(req.params.id)
+ }
+
+ User.findByIdAndUpdate(req.session.currentUser, {"favoriteFlats" : favorites})
+ .then(() => {
+  res.json({ message: `Flat is updated successfully.` });
+})
+.catch(err => {
+  res.json(err);
+})
+  
+}); 
 
 router.post('/myListings/edit/:id', (req, res, next)=>{
     Flat.findByIdAndUpdate(req.params.id, req.body)
