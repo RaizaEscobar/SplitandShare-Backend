@@ -66,10 +66,9 @@ app.use(express.static(path.join(__dirname, "public")));
 // ROUTER MIDDLEWARE
 
 app.use("/auth", auth);
-app.use('/', require('./routes/editMyFlat'))
-app.use('/', require('./routes/myListings'))
-app.use('/', require('./routes/improveMyProfile'))
-app.use('/', require('./routes/addMyFlat'))
+app.use('/', require('./routes/flat'));
+app.use('/', require('./routes/users'));
+
 
 
 // ERROR HANDLING
