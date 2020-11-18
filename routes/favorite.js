@@ -4,8 +4,12 @@ const Flat = require("../models/Flat");
 const User = require('../models/user');
 
 router.post("/flat/:id'", (req, res, next) => {
-   
-    User.findOne({$and:[{'userId' : req.session.currentUser._id },{"flatId": req.params.id}]}).then(user => {
+    const favFlatInfo = {
+      flatId: req.params.id,
+      userId: req.session.currentUser._id,
+    };
+
+    User.findOne({$and:[{'userId' : req.session.currentUser._id },{"eventId": req.body.eventId}]}).then(user => {
 
       if (user !== null) {
   
