@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  username: { type: String, required: true, unique: true },
+  username: { type: String, default: ""},
   email: { type: String, unique: true },
   password: { type: String, required: true },
   image: { type: String, default: "https://www.flaticon.es/svg/static/icons/svg/1077/1077114.svg" },
