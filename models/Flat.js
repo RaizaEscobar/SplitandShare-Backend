@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const flatSchema = new Schema({
   title: {type: String, required: true, unique: true, default: "Flat Title"},
   description: {type: String, required: true, unique: true, default: "Flat Description"},
-  images : [{type: String, default: "https://image.freepik.com/foto-gratis/casa-aislada-campo_1303-23773.jpg"}],
+  flatImages : [{type: String, default: "https://image.freepik.com/foto-gratis/casa-aislada-campo_1303-23773.jpg"}],
   price: {type: Number, default: 0}, //
   contact: {type: String, default: "Contact details"},
   rooms: {type: Number, default: 0}, //
