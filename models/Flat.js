@@ -10,7 +10,7 @@ const flatSchema = new Schema({
   rooms: {type: Number, default: 0}, //
   restrooms: {type: Number, default: 0}, //
   neighborhood: {type: String, default: "Barcelona"},
-  aircondition: {type: Boolean, default: false},
+  airconditioner: {type: Boolean, default: false},
   elevator: {type: Boolean, default: false},
   balcony: {type: Boolean, default: false},
   parking: {type: Boolean, default: false},
