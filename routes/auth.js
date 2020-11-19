@@ -19,19 +19,17 @@ router.post(
   isNotLoggedIn(),
   validationLoggin(),
   async (req, res, next) => {
-       const { email, password } = req.body;
+    const { email, password } = req.body;
 
     try {
       const emailExists = await User.findOne({ email }, "email");
-            if (emailExists) return next(createError(400));
+      if (emailExists) return next(createError(400));
       else {
         const salt = bcrypt.genSaltSync(saltRounds);
         const hashPass = bcrypt.hashSync(password, salt);
         const newUser = await User.create({ email, password: hashPass });
         req.session.currentUser = newUser;
-        res
-          .status(200) 
-          .json(newUser);
+        res.status(200).json(newUser);
       }
     } catch (error) {
       next(error);
@@ -40,52 +38,44 @@ router.post(
 );
 
 router.post(
-    "/login",
-    isNotLoggedIn(),
-    validationLoggin(),
-    async (req, res, next) => {
-      const { email, password } = req.body;
-      try {
-        const user = await User.findOne({ email });
-        if (!user) {
-          next(createError(404));
-        }
-        else if (bcrypt.compareSync(password, user.password)) {
-          req.session.currentUser = user;
-          res.status(200).json(user);
-          return;
-        } else {
-          next(createError(401));
-        }
-      } catch (error) {
-        next(error);
+  "/login",
+  isNotLoggedIn(),
+  validationLoggin(),
+  async (req, res, next) => {
+    const { email, password } = req.body;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        next(createError(404));
+      } else if (bcrypt.compareSync(password, user.password)) {
+        req.session.currentUser = user;
+        res.status(200).json(user);
+        return;
+      } else {
+        next(createError(401));
       }
+    } catch (error) {
+      next(error);
     }
-  );
+  }
+);
 
 router.post("/logout", isLoggedIn(), (req, res, next) => {
-    req.session.destroy();
-    
-    res
-      .status(204) 
-      .send();
-    return;
-  });
+  req.session.destroy();
 
-  
+  res.status(204).send();
+  return;
+});
+
 router.get("/private", isLoggedIn(), (req, res, next) => {
-   
-    res
-      .status(200) 
-      .json({ message: "Test - User is logged in" });
-  });
+  res.status(200).json({ message: "Test - User is logged in" });
+});
 
-  // GET '/me'
-
+// GET '/me'
 
 router.get("/me", isLoggedIn(), (req, res, next) => {
-    req.session.currentUser.password = "*";
-    res.json(req.session.currentUser);
-  });
+  req.session.currentUser.password = "*";
+  res.json(req.session.currentUser);
+});
 
-  module.exports = router;
+module.exports = router;
