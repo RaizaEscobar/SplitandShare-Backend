@@ -27,7 +27,7 @@ const userSchema = new Schema({
     maxAge: {type: Number, default: 28},
   },
   favoriteFlats: [{ type: Schema.Types.ObjectId, ref: "Flat" }],
-  favoriteFlatmate: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  favoriteFlatmates: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });
 
 const User = mongoose.model("User", userSchema);

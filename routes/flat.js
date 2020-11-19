@@ -3,6 +3,8 @@ const router = express.Router();
 const Flat = require("../models/Flat")
 const User = require('../models/user');
 
+const uploader = require("../configs/cloudinary-setup");
+
 router.post("/flat/:id", async (req, res, next) => {
  let currentUser = await User.findById(req.session.currentUser);
  let favorites = currentUser.favoriteFlats
@@ -49,7 +51,6 @@ router.post('/myListings/edit/:id', (req, res, next)=>{
     Flat.create({
       title: req.body.title,
       description: req.body.description,
-      images: req.body.images, 
       price: req.body.price,
       contact: req.body.contact,
       rooms: req.body.rooms,
@@ -76,6 +77,25 @@ router.post('/myListings/edit/:id', (req, res, next)=>{
         res.json(err);
       });
   });
+
+  router.post("/uploadFlatPicture/:id", uploader.array("flatImages"), async (req, res, next) => {
+    let currentFlat = await Flat.findById(req.params.id);
+    let flatImg = req.files.map(element => {
+      return element.secure_url
+    })
+   
+    let imageCollection = currentFlat.flatImages;
+    imageCollection.push(...flatImg);  
+      Flat.findByIdAndUpdate(req.params.id, { flatImages: imageCollection })
+        .then(() => {
+          res.json({ message: `Flat photos have been updated successfully
+          .` });
+        })
+        .catch((err) => {
+          res.json(err);
+        });
+    }
+  );
 
   router.get('/myListings', (req, res, next) => {
     Flat.find({"flatOwner":req.session.currentUser._id})
