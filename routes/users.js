@@ -75,4 +75,41 @@ router.get("/users", (req, res, next) => {
     });
 });
 
+
+//ruta para guardar un flatmate como favorito
+
+router.post("/idealFlatmate/:id", async (req, res, next) => {
+  let currentUser = await User.findById(req.session.currentUser);
+  let favorites = currentUser.favoriteFlatmates
+  let index = favorites.indexOf(req.params.id)
+ 
+  if (index > -1) {
+    favorites.splice(index, 1)
+  } else {
+    favorites.push(req.params.id)
+  }
+ 
+  User.findByIdAndUpdate(req.session.currentUser, {"favoriteFlatmates" : favorites})
+  .then(() => {
+   res.json({ message: `Favorite flatmates have been updated successfully.` });
+ })
+ .catch(err => {
+   res.json(err);
+ })
+   
+ }); 
+
+//ruta para enseñar el perfil de cada "flatmate"
+
+ router.get('/idealFlatmate/:id', (req, res, next)=>{
+
+  User.findById(req.params.id)
+    .then(response => {
+      res.status(200).json(response);
+    })
+    .catch(err => {
+      res.json(err);
+    })
+})
+
 module.exports = router;

@@ -88,7 +88,8 @@ router.post('/myListings/edit/:id', (req, res, next)=>{
     imageCollection.push(...flatImg);  
       Flat.findByIdAndUpdate(req.params.id, { flatImages: imageCollection })
         .then(() => {
-          res.json({ message: `Flat photos have been updated successfully.` });
+          res.json({ message: `Flat photos have been updated successfully
+          .` });
         })
         .catch((err) => {
           res.json(err);
