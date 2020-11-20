@@ -146,4 +146,4 @@ router.get("/users/suggested", async (req, res, next) => {
 
 });
 
-module.exports = router;
+module.exports = router
