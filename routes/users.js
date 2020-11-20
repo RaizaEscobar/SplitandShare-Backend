@@ -75,41 +75,75 @@ router.get("/users", (req, res, next) => {
     });
 });
 
-
 //ruta para guardar un flatmate como favorito
 
 router.post("/idealFlatmate/:id", async (req, res, next) => {
   let currentUser = await User.findById(req.session.currentUser);
-  let favorites = currentUser.favoriteFlatmates
-  let index = favorites.indexOf(req.params.id)
- 
+  let favorites = currentUser.favoriteFlatmates;
+  let index = favorites.indexOf(req.params.id);
+
   if (index > -1) {
-    favorites.splice(index, 1)
+    favorites.splice(index, 1);
   } else {
-    favorites.push(req.params.id)
+    favorites.push(req.params.id);
   }
- 
-  User.findByIdAndUpdate(req.session.currentUser, {"favoriteFlatmates" : favorites})
-  .then(() => {
-   res.json({ message: `Favorite flatmates have been updated successfully.` });
- })
- .catch(err => {
-   res.json(err);
- })
-   
- }); 
 
-//ruta para enseñar el perfil de cada "flatmate"
-
- router.get('/idealFlatmate/:id', (req, res, next)=>{
-
-  User.findById(req.params.id)
-    .then(response => {
-      res.status(200).json(response);
+  User.findByIdAndUpdate(req.session.currentUser, {
+    favoriteFlatmates: favorites,
+  })
+    .then(() => {
+      res.json({
+        message: `Favorite flatmates have been updated successfully.`,
+      });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json(err);
-    })
-})
+    });
+});
+
+router.get("/users/suggested", async (req, res, next) => {
+  let currentUser = await User.findById(req.session.currentUser);
+  let minBudget = currentUser.maxBudget - 100
+  let maxBudget = currentUser.maxBudget + 100
+  let condition = {
+    $and: [
+      { "maxBudget": { $gte:  minBudget} },
+      { "maxBudget": { $lte: maxBudget } },
+      { "age": { $gte: currentUser.searchingFor.minAge } },
+      { "age": { $lte: currentUser.searchingFor.maxAge } },
+      { "searchingFor.maxAge": { $gte: currentUser.age } },
+      { "searchingFor.minAge": { $lte: currentUser.age } },
+      { "gender": currentUser.searchingFor.gender },
+      {
+        $or: [
+          { "searchingFor.gender": currentUser.gender },
+          { "searchingFor.gender": "indifferent" },
+        ],
+      },
+      { "isSmoking": currentUser.searchingFor.smoke == "true" },
+      {
+        $or: [
+          { "searchingFor.smoke": currentUser.isSmoking.toString() },
+          { "searchingFor.smoke": "indifferent" },
+        ],
+      },
+      { "hasPet": currentUser.searchingFor == "true" },
+      {
+        $or: [
+          { "searchingFor.pets": currentUser.hasPet.toString() },
+          { "searchingFor.pets": "indifferent" },
+        ],
+      },
+    ],
+  };
+  User.find(condition)
+  .then((usersList) => {
+    res.json(usersList);
+  })
+  .catch((err) => {
+    res.json(err);
+  });
+
+});
 
 module.exports = router;
