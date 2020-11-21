@@ -1,9 +1,10 @@
+require("dotenv").config();
 let axios = require("axios").default;
 const mongoose = require("mongoose");
 const Flat = require("../models/Flat");
 
 mongoose
-  .connect("mongodb://localhost:27017/backend-server", {
+  .connect(process.env.MONGODB_URI, {
     useUnifiedTopology: true,
     keepAlive: true,
     useNewUrlParser: true,
@@ -18,7 +19,7 @@ let authOptions = {
     'grant_type': 'client_credentials'
   },
   headers: {
-    'Authorization': 'Basic YXN1bHdrZ3hrMnIzcHFjODI2MXJodWN1bjh1dnZ1bGw6azRKQTJpejJwblNj',
+    'Authorization': `Basic ${process.env.IDEALISTA_KEY}`,
     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
   }
 };
