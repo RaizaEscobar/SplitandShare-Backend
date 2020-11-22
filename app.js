@@ -11,6 +11,8 @@ const MongoStore = require("connect-mongo")(session);
 const cors = require("cors");
 
 const auth = require("./routes/auth");
+// EXPRESS SERVER INSTANCE
+const app = express();
 
 // MONGOOSE CONNECTION
 mongoose
@@ -22,8 +24,6 @@ mongoose
   .then(() => console.log(`Connected to database`))
   .catch((err) => console.error(err));
 
-// EXPRESS SERVER INSTANCE
-const app = express();
 
 // CORS MIDDLEWARE SETUP
 app.use(
@@ -32,13 +32,6 @@ app.use(
     origin: [process.env.PUBLIC_DOMAIN],
   })
 );
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS, DELETE');
-//   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-//   next();
-// });
 
 // SESSION MIDDLEWARE
 app.use(
@@ -64,13 +57,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // ROUTER MIDDLEWARE
-
-
+app.use('/', require('./routes/index'));
 app.use("/auth", auth);
 app.use('/', require('./routes/flat'));
 app.use('/', require('./routes/users'));
-
-
 
 // ERROR HANDLING
 // catch 404 and forward to error handler
