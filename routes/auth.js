@@ -23,7 +23,7 @@ router.post(
 
     try {
       const emailExists = await User.findOne({ email }, "email");
-      if (emailExists) return next(createError(400));
+      if (emailExists) return next(createError(400, "the user already exists"));
       else {
         const salt = bcrypt.genSaltSync(saltRounds);
         const hashPass = bcrypt.hashSync(password, salt);
