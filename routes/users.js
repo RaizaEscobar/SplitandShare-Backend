@@ -47,17 +47,20 @@ router.get("/users", (req, res, next) => {
     hasPet,
     isSmoking,
     isWorking,
-    isStudyng,
+    isStudying,
     maxBudget,
+    limit
   } = req.query;
 
+  limit = !limit ? 100 : parseInt(limit);
+
   let condition = { $and: [] };
-  location && condition.$and.push({ location: location });
+  location && condition.$and.push({ "searchingFor.location": {$regex: new RegExp("^" + location.toLowerCase(), "i")} });
   gender && condition.$and.push({ gender: gender });
   hasPet && condition.$and.push({ hasPet: hasPet });
   isSmoking && condition.$and.push({ isSmoking: isSmoking });
   isWorking && condition.$and.push({ isWorking: isWorking });
-  isStudyng && condition.$and.push({ isStudyng: isStudyng });
+  isStudying && condition.$and.push({ isStudying: isStudying });
   maxBudget && condition.$and.push({ maxBudget: { $lte: maxBudget } });
   maxAge && condition.$and.push({ age: { $lte: maxAge } });
   minAge && condition.$and.push({ age: { $gte: minAge } });
@@ -66,8 +69,9 @@ router.get("/users", (req, res, next) => {
     condition = {};
   }
 
-  User.find(condition)
+  User.find(condition).limit(limit)
     .then((usersList) => {
+      console.log(usersList)
       res.json(usersList);
     })
     .catch((err) => {
@@ -100,6 +104,18 @@ router.post("/idealFlatmate/:id", async (req, res, next) => {
       res.json(err);
     });
 });
+
+router.get('/users/favorites', (req, res, next)=>{
+  User.findById(req.query.id).populate('favoriteFlatmates').exec((err,users)=>{
+    res.json(users.favoriteFlatmates)
+  })
+})
+
+router.get('/flats/favorites', (req, res, next)=>{
+  User.findById(req.query.id).populate('favoriteFlats').exec((err,users)=>{
+    res.json(users.favoriteFlats)
+  })
+})
 
 router.get("/users/suggested", async (req, res, next) => {
   let currentUser = await User.findById(req.session.currentUser);
