@@ -6,7 +6,7 @@ const userSchema = new Schema({
   email: { type: String, unique: true },
   password: { type: String, required: true },
   image: { type: String, default: "https://www.flaticon.es/svg/static/icons/svg/1077/1077114.svg" },
-  userType: { type: String, enum: ["Flat Hunter", "Flat Owner "], default: "Flat Hunter" },
+  userType: { type: String, enum: ["Flat Hunter", "Flat Owner"], default: "Flat Hunter" },
   gender: { type: String, enum: ["female", "male", "other"], default: "other" },
   hasPet: {type: Boolean, default: false},
   isSmoking: {type: Boolean, default: false},

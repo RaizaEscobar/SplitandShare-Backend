@@ -70,7 +70,7 @@ router.get("/flats", (req, res, next) => {
   squareMeters && condition.$and.push({ squareMeters: { $gte: squareMeters } });
   maxPrice && condition.$and.push({ price: { $lte: maxPrice } });
   minPrice && condition.$and.push({ price: { $gte: minPrice } });
-
+  console.log(condition)
   if (condition.$and.length === 0) {
     condition = {};
   }
