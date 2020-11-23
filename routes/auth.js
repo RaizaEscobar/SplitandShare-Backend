@@ -32,7 +32,7 @@ router.post(
         res.status(200).json(newUser);
       }
     } catch (error) {
-      next(error);
+      res.status(400).json(error);
     }
   }
 );
@@ -46,16 +46,16 @@ router.post(
     try {
       const user = await User.findOne({ email });
       if (!user) {
-        next(createError(404));
+       return next(createError(404), "the user does not exist");
       } else if (bcrypt.compareSync(password, user.password)) {
         req.session.currentUser = user;
         res.status(200).json(user);
         return;
       } else {
-        next(createError(401));
+     return next(createError(401), "the password is not correct");
       }
     } catch (error) {
-      next(error);
+      res.status(400).json(error);
     }
   }
 );
