@@ -73,7 +73,7 @@ router.get("/flats", (req, res, next) => {
   squareMeters && condition.$and.push({ squareMeters: { $gte: squareMeters } });
   maxPrice && condition.$and.push({ price: { $lte: maxPrice } });
   minPrice && condition.$and.push({ price: { $gte: minPrice } });
-
+  console.log(condition)
   if (condition.$and.length === 0) {
     condition = {};
   }
@@ -88,9 +88,11 @@ router.get("/flats", (req, res, next) => {
 });
 
 router.post("/addMyFlat", (req, res, next) => {
+  console.log(req.body)
   Flat.create({
     title: req.body.title,
     description: req.body.description,
+    flatImages: req.body.flatImages,
     price: req.body.price,
     contact: req.body.contact,
     rooms: req.body.rooms,
@@ -108,7 +110,7 @@ router.post("/addMyFlat", (req, res, next) => {
     swimmingPool: req.body.swimmingPool,
     storeRoom: req.body.storeRoom,
     builtinWardrobes: req.body.builtinWardrobes,
-    flatOwner: req.session.currentUser._id,
+    flatOwner: req.body._id
   })
     .then((response) => {
       res.json(response);
@@ -141,6 +143,20 @@ router.post(
       });
   }
 );
+
+
+router.post("/upload", uploader.single("imageUrl"), (req, res, next) => {
+  // console.log('file is: ', req.file)
+
+  if (!req.file) {
+    next(new Error("No file uploaded!"));
+    return;
+  }
+  // get secure_url from the file object and save it in the
+  // variable 'secure_url', but this can be any name, just make sure you remember to use the same in frontend
+  res.json({ secure_url: req.file.secure_url });
+});
+
 
 router.get("/myListings", (req, res, next) => {
   Flat.find({ flatOwner: req.session.currentUser._id })
