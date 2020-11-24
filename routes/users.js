@@ -38,11 +38,10 @@ router.get("/profile/:id", (req, res, next) => {
     });
 });
 
-router.get("/isFavorite/:id", (req, res, next) => {
-  console.log(req.session.currentUser)
+router.get("/user/isFavorite/:id", (req, res, next) => {  
   User.findById(req.session.currentUser)
   .then((response) => {
-   let index = response ? response.favoriteFlatmates.indexOf(req.params.id) : -1
+   let index = response.favoriteFlatmates.indexOf(req.params.id);
    res.json(index > -1)
   })
   .catch((err) => {
@@ -83,7 +82,6 @@ router.get("/users", (req, res, next) => {
 
   User.find(condition).limit(limit)
     .then((usersList) => {
-      console.log(usersList)
       res.json(usersList);
     })
     .catch((err) => {
@@ -94,8 +92,7 @@ router.get("/users", (req, res, next) => {
 //ruta para guardar un flatmate como favorito
 
 router.post("/idealFlatmate/:id", async (req, res, next) => {
-  let currentUser = await User.findById(req.session.currentUser);
-  console.log(currentUser, req.session.currentUser)
+  let currentUser = await User.findById(req.session.currentUser);  
   let favorites = currentUser.favoriteFlatmates;
   let index = favorites.indexOf(req.params.id);
 
@@ -119,14 +116,8 @@ router.post("/idealFlatmate/:id", async (req, res, next) => {
 });
 
 router.get('/users/favorites', (req, res, next)=>{
-  User.findById(req.query.id).populate('favoriteFlatmates').exec((err,users)=>{
+  User.findById(req.session.currentUser).populate('favoriteFlatmates').exec((err,users)=>{
     res.json(users.favoriteFlatmates)
-  })
-})
-
-router.get('/flats/favorites', (req, res, next)=>{
-  User.findById(req.query.id).populate('favoriteFlats').exec((err,users)=>{
-    res.json(users.favoriteFlats)
   })
 })
 

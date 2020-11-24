@@ -168,4 +168,22 @@ router.get("/myListings", (req, res, next) => {
     });
 });
 
+router.get('/flats/favorites', (req, res, next)=>{
+  User.findById(req.session.currentUser).populate('favoriteFlats').exec((err,users)=>{
+    res.json(users.favoriteFlats)
+  })
+})
+
+router.get("/flat/isFavorite/:id", (req, res, next) => {  
+  User.findById(req.session.currentUser)
+  .then((response) => {
+   let index = response.favoriteFlats.indexOf(req.params.id);
+   res.json(index > -1)
+  })
+  .catch((err) => {
+    res.json(err);
+  });
+})
+
+
 module.exports = router;
