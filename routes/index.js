@@ -23,14 +23,10 @@ router.post("/calculate", (req, res, next) => {
   }
 
   req.body.flatmates.sort((a, b) => {
-    if (a.peopleNumber === b.peopleNumber) {
-      return a.willingToPay < b.willingToPay
-        ? -1
-        : a.willingToPay > b.willingToPay
-        ? 1
-        : 0;
+    if (a.people === b.people) {
+      return a.budget < b.budget ? -1 : a.budget > b.budget ? 1 : 0;
     } else {
-      return a.peopleNumber < b.peopleNumber ? -1 : 1;
+      return a.people < b.people ? -1 : 1;
     }
   });
 

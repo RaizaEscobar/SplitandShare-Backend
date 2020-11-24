@@ -57,10 +57,13 @@ router.get("/flats", (req, res, next) => {
     balcony,
     squareMeters,
     furnished,
+    limit
   } = req.query;
 
+  limit = !limit ? 100 : parseInt(limit);
+
   let condition = { $and: [] };
-  neighborhood && condition.$and.push({ neighborhood: neighborhood });
+  neighborhood && condition.$and.push({ neighborhood: {$regex: new RegExp("^" + neighborhood.toLowerCase(), "i")} });
   airconditioner && condition.$and.push({ airconditioner: airconditioner });
   elevator && condition.$and.push({ elevator: elevator });
   balcony && condition.$and.push({ balcony: balcony });
@@ -75,7 +78,7 @@ router.get("/flats", (req, res, next) => {
     condition = {};
   }
 
-  Flat.find(condition)
+  Flat.find(condition).limit(limit)
     .then((flatsList) => {
       res.json(flatsList);
     })
