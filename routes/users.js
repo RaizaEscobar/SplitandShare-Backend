@@ -38,6 +38,18 @@ router.get("/profile/:id", (req, res, next) => {
     });
 });
 
+router.get("/isFavorite/:id", (req, res, next) => {
+  console.log(req.session.currentUser)
+  User.findById(req.session.currentUser)
+  .then((response) => {
+   let index = response ? response.favoriteFlatmates.indexOf(req.params.id) : -1
+   res.json(index > -1)
+  })
+  .catch((err) => {
+    res.json(err);
+  });
+})
+
 router.get("/users", (req, res, next) => {
   let {
     location,
@@ -79,6 +91,7 @@ router.get("/users", (req, res, next) => {
 
 router.post("/idealFlatmate/:id", async (req, res, next) => {
   let currentUser = await User.findById(req.session.currentUser);
+  console.log(currentUser, req.session.currentUser)
   let favorites = currentUser.favoriteFlatmates;
   let index = favorites.indexOf(req.params.id);
 
@@ -145,5 +158,7 @@ router.get("/users/suggested", async (req, res, next) => {
   });
 
 });
+
+
 
 module.exports = router
