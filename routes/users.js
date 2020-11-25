@@ -38,6 +38,17 @@ router.get("/profile/:id", (req, res, next) => {
     });
 });
 
+router.get("/user/isFavorite/:id", (req, res, next) => {  
+  User.findById(req.session.currentUser)
+  .then((response) => {
+   let index = response.favoriteFlatmates.indexOf(req.params.id);
+   res.json(index > -1)
+  })
+  .catch((err) => {
+    res.json(err);
+  });
+})
+
 router.get("/users", (req, res, next) => {
   let {
     location,
@@ -47,17 +58,20 @@ router.get("/users", (req, res, next) => {
     hasPet,
     isSmoking,
     isWorking,
-    isStudyng,
+    isStudying,
     maxBudget,
+    limit
   } = req.query;
 
+  limit = !limit ? 100 : parseInt(limit);
+
   let condition = { $and: [] };
-  location && condition.$and.push({ location: location });
+  location && condition.$and.push({ "searchingFor.location": {$regex: new RegExp("^" + location.toLowerCase(), "i")} });
   gender && condition.$and.push({ gender: gender });
   hasPet && condition.$and.push({ hasPet: hasPet });
   isSmoking && condition.$and.push({ isSmoking: isSmoking });
   isWorking && condition.$and.push({ isWorking: isWorking });
-  isStudyng && condition.$and.push({ isStudyng: isStudyng });
+  isStudying && condition.$and.push({ isStudying: isStudying });
   maxBudget && condition.$and.push({ maxBudget: { $lte: maxBudget } });
   maxAge && condition.$and.push({ age: { $lte: maxAge } });
   minAge && condition.$and.push({ age: { $gte: minAge } });
@@ -66,7 +80,7 @@ router.get("/users", (req, res, next) => {
     condition = {};
   }
 
-  User.find(condition)
+  User.find(condition).limit(limit)
     .then((usersList) => {
       res.json(usersList);
     })
@@ -78,7 +92,7 @@ router.get("/users", (req, res, next) => {
 //ruta para guardar un flatmate como favorito
 
 router.post("/idealFlatmate/:id", async (req, res, next) => {
-  let currentUser = await User.findById(req.session.currentUser);
+  let currentUser = await User.findById(req.session.currentUser);  
   let favorites = currentUser.favoriteFlatmates;
   let index = favorites.indexOf(req.params.id);
 
@@ -100,6 +114,12 @@ router.post("/idealFlatmate/:id", async (req, res, next) => {
       res.json(err);
     });
 });
+
+router.get('/users/favorites', (req, res, next)=>{
+  User.findById(req.session.currentUser).populate('favoriteFlatmates').exec((err,users)=>{
+    res.json(users.favoriteFlatmates)
+  })
+})
 
 router.get("/users/suggested", async (req, res, next) => {
   let currentUser = await User.findById(req.session.currentUser);
@@ -145,5 +165,7 @@ router.get("/users/suggested", async (req, res, next) => {
   });
 
 });
+
+
 
 module.exports = router

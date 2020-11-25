@@ -7,30 +7,26 @@ router.post("/calculate", (req, res, next) => {
   let totalPeople = 0;
   let roomInfo = req.body.rooms.map((ele) => {
     totalRoomPrice += unitaryPrice * ele.size;
-    totalPeople += ele.peopleNumber;
+    totalPeople += parseInt(ele.peopleNumber);
     return {
       roomName: ele.name,
       price: unitaryPrice * ele.size,
       flatmateName: "",
-      peopleNumber: ele.peopleNumber,
+      peopleNumber: parseInt(ele.peopleNumber),
     };
   });
 
   let commonPrice = (req.body.totalPrice - totalRoomPrice) / totalPeople;
 
   for (let i = 0; i < roomInfo.length; i++) {
-    roomInfo[i].price += commonPrice * roomInfo[i].peopleNumber;
+    roomInfo[i].price = parseInt(roomInfo[i].price + commonPrice * roomInfo[i].peopleNumber);
   }
 
   req.body.flatmates.sort((a, b) => {
-    if (a.peopleNumber === b.peopleNumber) {
-      return a.willingToPay < b.willingToPay
-        ? -1
-        : a.willingToPay > b.willingToPay
-        ? 1
-        : 0;
+    if (a.people === b.people) {
+      return a.budget < b.budget ? -1 : a.budget > b.budget ? 1 : 0;
     } else {
-      return a.peopleNumber < b.peopleNumber ? -1 : 1;
+      return a.people < b.people ? -1 : 1;
     }
   });
 
