@@ -87,8 +87,7 @@ router.get("/flats", (req, res, next) => {
     });
 });
 
-router.post("/addMyFlat", (req, res, next) => {
-  console.log(req.body)
+router.post("/addMyFlat", (req, res, next) => {  
   Flat.create({
     title: req.body.title,
     description: req.body.description,
