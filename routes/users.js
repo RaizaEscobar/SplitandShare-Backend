@@ -5,6 +5,7 @@ const User = require("../models/user");
 const uploader = require("../configs/cloudinary-setup");
 
 router.post("/improveMyProfile/:id", (req, res, next) => {
+  
   User.findByIdAndUpdate(req.params.id, req.body)
     .then(() => {
       res.json({ message: `User is updated successfully.` });
