@@ -132,22 +132,19 @@ router.get("/users/suggested", async (req, res, next) => {
       { "age": { $gte: currentUser.searchingFor.minAge } },
       { "age": { $lte: currentUser.searchingFor.maxAge } },
       { "searchingFor.maxAge": { $gte: currentUser.age } },
-      { "searchingFor.minAge": { $lte: currentUser.age } },
-      { "gender": currentUser.searchingFor.gender },
+      { "searchingFor.minAge": { $lte: currentUser.age } },      
       {
         $or: [
           { "searchingFor.gender": currentUser.gender },
           { "searchingFor.gender": "indifferent" },
         ],
-      },
-      { "isSmoking": currentUser.searchingFor.smoke == "true" },
+      },      
       {
         $or: [
           { "searchingFor.smoke": currentUser.isSmoking.toString() },
           { "searchingFor.smoke": "indifferent" },
         ],
-      },
-      { "hasPet": currentUser.searchingFor == "true" },
+      },      
       {
         $or: [
           { "searchingFor.pets": currentUser.hasPet.toString() },
@@ -156,6 +153,19 @@ router.get("/users/suggested", async (req, res, next) => {
       },
     ],
   };
+
+  if(currentUser.searchingFor.gender != "indifferent")
+  {
+    condition.$and.push({ "gender": currentUser.searchingFor.gender });
+  }
+  if(currentUser.searchingFor.smoke != "indifferent")
+  {
+    condition.$and.push({ "isSmoking": currentUser.searchingFor.smoke == "true" });
+  }
+  if(currentUser.searchingFor.pets != "indifferent")
+  {
+    condition.$and.push({ "hasPet": currentUser.searchingFor.pets == "true" });
+  }  
   User.find(condition)
   .then((usersList) => {
     res.json(usersList);
