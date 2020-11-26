@@ -61,6 +61,7 @@ app.use('/', require('./routes/index'));
 app.use("/auth", auth);
 app.use('/', require('./routes/flat'));
 app.use('/', require('./routes/users'));
+app.use('/', require('./routes/messages'));
 
 // ERROR HANDLING
 // catch 404 and forward to error handler
