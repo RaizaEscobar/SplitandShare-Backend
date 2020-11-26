@@ -73,7 +73,7 @@ router.get("/flats", (req, res, next) => {
   squareMeters && condition.$and.push({ squareMeters: { $gte: squareMeters } });
   maxPrice && condition.$and.push({ price: { $lte: maxPrice } });
   minPrice && condition.$and.push({ price: { $gte: minPrice } });
-  console.log(condition)
+  
   if (condition.$and.length === 0) {
     condition = {};
   }
@@ -109,7 +109,7 @@ router.post("/addMyFlat", (req, res, next) => {
     swimmingPool: req.body.swimmingPool,
     storeRoom: req.body.storeRoom,
     builtinWardrobes: req.body.builtinWardrobes,
-    flatOwner: req.body._id
+    flatOwner: req.session.currentUser._id
   })
     .then((response) => {
       res.json(response);
@@ -144,9 +144,7 @@ router.post(
 );
 
 
-router.post("/upload", uploader.single("imageUrl"), (req, res, next) => {
-  // console.log('file is: ', req.file)
-
+router.post("/upload", uploader.single("imageUrl"), (req, res, next) => {  
   if (!req.file) {
     next(new Error("No file uploaded!"));
     return;
